@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>Robot 2027 Companion V1.4</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+
+  <!-- TOP HEADER BAR -->
+  <header class="top-header">
+    <div class="status-pills">
+      <span class="status-pill brand">🤖 ROBO</span>
+      <span id="profileStarPill" class="status-pill star" onclick="editChildProfile()">👤 Bé Bi • ★ 2</span>
+      <span id="batteryTempPill" class="status-pill" onclick="refreshDeviceStatus()">🔋 65% • 38.0°C</span>
+    </div>
+
+    <nav class="nav-tabs">
+      <button class="tab-btn" data-tab="study" onclick="switchTab('study')">
+        <span class="ico">📖</span><span>Sổ học</span>
+      </button>
+      <button class="tab-btn active" data-tab="robot" onclick="switchTab('robot')">
+        <span class="ico">🤖</span><span>Robot</span>
+      </button>
+      <button class="tab-btn" data-tab="youtube" onclick="switchTab('youtube')">
+        <span class="ico">▶️</span><span>YouTube</span>
+      </button>
+      <button class="tab-btn" data-tab="game" onclick="switchTab('game')">
+        <span class="ico">🎮</span><span>Game</span>
+      </button>
+      <button class="tab-btn" data-tab="setting" onclick="requestOpenSetting()">
+        <span class="ico">⚙️</span><span>Setting</span>
+      </button>
+      <button class="tab-btn" data-tab="guide" onclick="switchTab('guide')">
+        <span class="ico">❗</span><span>Hướng dẫn</span>
+      </button>
+    </nav>
+  </header>
+
+  <!-- MAIN WORKSPACE -->
+  <main class="main-workspace">
+
+    <!-- TAB 1: SỔ HỌC (32 GÓI CHỦ ĐỀ OFFLINE & ĐỒNG BỘ API) -->
+    <section id="tab-study" class="tab-pane">
+      <div class="study-toolbar">
+        <h2>📚 Kho Chủ Đề Học Tiếng Anh Song Ngữ</h2>
+        <div style="display:flex; gap:8px; align-items:center;">
+          <input id="studySearchInput" class="search-box" type="text" placeholder="Tìm chủ đề (Gia đình, Động vật...)" oninput="filterStudyTopics(this.value)" />
+          <button class="btn btn-primary" onclick="syncStudyPacks()">🔄 Đồng bộ 32 gói Server</button>
+        </div>
+      </div>
+      <div id="topicsGrid" class="topics-grid"></div>
+    </section>
+
+    <!-- TAB 2: ROBOT FACE + KARAOKE + ZERO-BEEP MIC -->
+    <section id="tab-robot" class="tab-pane active">
+      <div class="robot-stage-layout">
+        <div id="faceBox" class="face-box" onclick="wakeUpRobot()">
+          <span class="sleep-zzz">Zzz...</span>
+          <div class="eyes-row">
+            <div class="robo-eye"></div>
+            <div class="robo-eye"></div>
+          </div>
+          <div class="robo-mouth"></div>
+        </div>
+
+        <div class="karaoke-panel">
+          <div class="k-header">
+            <span id="lessonTopicBadge" class="k-badge">1. Chào hỏi & Làm quen (1/3)</span>
+            <button class="btn" style="padding:4px 10px; font-size:12px;" onclick="toggleDockEyes()">👁️ Thu/Phóng mắt</button>
+          </div>
+
+          <div>
+            <div id="karaokeEn" class="k-en">Hello! My name is Robo.</div>
+            <div id="karaokeSpell" class="k-spell">Hel-lo! My name is Ro-bo.</div>
+            <div id="karaokeVi" class="k-vi">Xin chào! Tên mình là Robo.</div>
+          </div>
+
+          <div id="pronounceFeedback" class="k-feedback">Bấm "Bé đọc" để luyện phát âm nhận sao ★!</div>
+
+          <div class="k-actions">
+            <button class="btn" onclick="prevSentence()">⏮️ Trước</button>
+            <button class="btn btn-primary" onclick="playCurrentSentence()">🔊 Nghe mẫu</button>
+            <button class="btn" onclick="speakVietnameseMeaning()">🇻🇳 Nghĩa Việt</button>
+            <button class="btn btn-success" onclick="startPronounceCheck()">🎙️ Bé đọc</button>
+            <button id="btnReplayHeard" class="btn btn-purple" onclick="replayChildHeard()" disabled>👂 Giọng bé</button>
+            <button class="btn" onclick="nextSentence()">⏭️ Tiếp</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- TAB 3: YOUTUBE AN TOÀN ĐỔI SAO -->
+    <section id="tab-youtube" class="tab-pane">
+      <div class="yt-topbar">
+        <input id="ytSearchInput" class="search-box" type="text" value="English songs for kids" placeholder="Nhập tên bài hát / video..." />
+        <button class="btn btn-primary" onclick="loadYoutubeSearch()">🔍 Tìm</button>
+        <button class="btn" onclick="quickYoutubePreset('Super Simple Songs')">🎵 Nhạc thiếu nhi</button>
+        <button class="btn" onclick="quickYoutubePreset('English stories for kids')">📖 Truyện tiếng Anh</button>
+        <span id="ytTimerLabel" style="font-size:12.5px; color:#fbbf24; font-weight:700; margin-left:auto;">⏱️ Thời gian xem: Hết giờ (Cần 1★)</span>
+        <button class="btn btn-warn" onclick="spendStarForTime('youtube')">⭐ Đổi 1★ = 10 phút</button>
+      </div>
+      <div id="ytContainerPlaceholder" class="yt-placeholder">
+        Bấm "⭐ Đổi 1★ = 10 phút" hoặc "🔍 Tìm" để mở video học tiếng Anh tại đây!
+      </div>
+    </section>
+
+    <!-- TAB 4: KHU VỰC TRÒ CHƠI TƯƠNG TÁC -->
+    <section id="tab-game" class="tab-pane">
+      <div class="game-header">
+        <h2>🎮 Khu Vực Trò Chơi Tương Tác</h2>
+        <div style="display:flex; gap:8px; flex-wrap:wrap;">
+          <button class="btn btn-primary" onclick="startGameRPS()">✊✋✌️ Oẳn Tù Tì</button>
+          <button class="btn btn-warn" onclick="startGameCup()">🥤 Tìm Ngọc Dưới Cốc</button>
+          <button class="btn btn-success" onclick="openOnlineGames()">🌐 Kho Game Online</button>
+        </div>
+      </div>
+      <div id="gameArena" class="game-arena">
+        <div style="font-size:16px; color:#e2e8f0; font-weight:600;">
+          Chọn một trò chơi phía trên để thi đấu cùng Robot (hỗ trợ cả cảm ứng và 4 nút cứng ESP32)!
+        </div>
+      </div>
+    </section>
+
+    <!-- TAB 5: TRUNG TÂM ĐIỀU KHIỂN & CÀI ĐẶT ROBOT -->
+    <section id="tab-setting" class="tab-pane">
+      <div class="setting-header">
+        <h2>⚙️ Trung Tâm Điều Khiển & Cài Đặt Robot</h2>
+        <div id="settingStatusBanner" class="status-banner">Bot ID: BOT_8XSNEI | Wi-Fi: Đang kiểm tra... | Nhiệt độ: 38.0°C</div>
+      </div>
+
+      <div class="setting-grid">
+        <div class="setting-card">
+          <h3>☀️ Màn Hình & Âm Thanh Thật</h3>
+          <div class="slider-group">
+            <label>Độ sáng màn hình: <b id="brightnessVal">70%</b></label>
+            <input type="range" min="10" max="100" value="70" oninput="onBrightnessChange(this.value)" />
+          </div>
+          <div class="slider-group">
+            <label>Âm lượng loa hệ thống: <b id="volumeVal">80%</b></label>
+            <input type="range" min="0" max="100" value="80" oninput="onVolumeChange(this.value)" />
+          </div>
+          <div class="slider-group">
+            <label>Tốc độ giọng đọc tiếng Anh:</label>
+            <select id="ttsSpeedSelect" onchange="saveSettings()">
+              <option value="0.75">🐢 Chậm rõ từng từ (0.75x - Mới học)</option>
+              <option value="0.95" selected>🚶 Chuẩn (0.95x - Tự nhiên)</option>
+              <option value="1.15">🐇 Nhanh (1.15x - Luyện phản xạ)</option>
+            </select>
+          </div>
+          <div style="display:flex; gap:10px;">
+            <button class="btn btn-primary" style="flex:1" onclick="testSpeaker()">🔊 Test Loa</button>
+            <button class="btn btn-success" style="flex:1" onclick="testMicrophone()">🎙️ Test Mic</button>
+          </div>
+        </div>
+
+        <div class="setting-card">
+          <h3>📡 Kết Nối Mạng & Phần Cứng</h3>
+          <button class="hw-btn hw-cyan" onclick="openAndroidWifi()">📶 Chọn Mạng Wi-Fi (Android)</button>
+          <button class="hw-btn hw-purple" onclick="openEsp32Modal()">🔵 Bluetooth & Mạch ESP32</button>
+          <button class="hw-btn hw-amber" onclick="openApiConfigModal()">🌐 Cấu Hình Địa Chỉ Server API</button>
+          <button class="hw-btn hw-slate" onclick="openChangePinModal()">🔑 Đổi Mã PIN Phụ Huynh (Mặc định: 1234)</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- TAB 6: HƯỚNG DẪN SỬ DỤNG & SƠ ĐỒ PHẦN CỨNG -->
+    <section id="tab-guide" class="tab-pane">
+      <div class="guide-grid">
+        <div class="guide-card">
+          <h3>1. Học Tiếng Anh & Tích Sao Đổi Quà (★)</h3>
+          • Chọn chủ đề trong <b>Sổ học</b> (có sẵn offline hoặc bấm <b>Đồng bộ 32 gói Server</b>).<br/>
+          • Tại tab <b>Robot</b>, bấm <b>Nghe mẫu</b> để xem từng từ phát sáng theo nhịp Karaoke, sau đó bấm <b>Bé đọc</b>.<br/>
+          • Đọc đúng từ <b>80%</b> trở lên sẽ nhận ngay <b>+1 ★</b> để đổi 10 phút xem YouTube hoặc chơi Game.
+        </div>
+        <div class="guide-card">
+          <h3>2. Kết Nối Mạch ESP32 & 4 Nút Cứng (BLE)</h3>
+          • Mở <b>Setting → Bluetooth & Mạch ESP32</b> để ghép nối mạch ESP32 phát sóng BLE (UUID <code>0xFFE0</code>).<br/>
+          • <b>4 nút vật lý:</b> Nút 1 = Bé đọc / Búa; Nút 2 = Nghe mẫu / Bao; Nút 3 = Câu tiếp / Kéo; Nút 4 = Mở Sổ học.<br/>
+          • App tự gửi lệnh cử động Servo (<code>M:NOD</code>, <code>M:HAPPY</code>, <code>M:CLAP</code>) đồng bộ cảm xúc.
+        </div>
+        <div class="guide-card">
+          <h3>3. Khắc Phục Hiển Thị Tên Wi-Fi & IP LAN</h3>
+          • Android 10+ yêu cầu bật <b>Vị trí (GPS)</b> để ứng dụng đọc được tên Wi-Fi và địa chỉ IP nội bộ.<br/>
+          • Nếu thấy <i>"Bật GPS để hiện tên"</i>, hãy kéo thanh trạng thái Android xuống và bật biểu tượng <b>Vị trí</b>.
+        </div>
+        <div class="guide-card">
+          <h3>4. Bảo Vệ Phụ Huynh & Chế Độ Kiosk</h3>
+          • Tab <b>Setting</b> được khóa bằng mã PIN 4 số (mặc định <b>1234</b>) để bé không chạm nhầm cài đặt.<br/>
+          • Sau 60 giây không tương tác, Robot tự động chuyển sang trạng thái ngủ (<code>Zzz...</code>) để tiết kiệm pin và giữ máy mát.
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- FLOATING / DOCKED YOUTUBE PLAYER HOST -->
+  <div id="ytPlayerHost" class="yt-player-host hidden-in-setting">
+    <div class="yt-mini-controls">
+      <button class="yt-mini-btn" title="Phóng to về tab YouTube" onclick="switchTab('youtube')">⤢</button>
+      <button class="yt-mini-btn" title="Tắt video" onclick="closeYoutubeMiniPlayer()">✕</button>
+    </div>
+    <iframe
+      id="ytFrame"
+      src="about:blank"
+      style="width:100%; height:100%; border:none;"
+      allow="autoplay; fullscreen; encrypted-media"
+      sandbox="allow-scripts allow-same-origin allow-presentation">
+    </iframe>
+  </div>
+
+  <!-- MODAL 1: KHÓA PIN PHỤ HUYNH -->
+  <div id="pinModal" class="modal-backdrop">
+    <div class="modal-card">
+      <h3>🔒 Nhập Mã PIN Phụ Huynh (4 số)</h3>
+      <p style="font-size:12.5px; color:#94a3b8;">Mã mặc định là <b>1234</b>. Bạn có thể đổi mã sau khi vào Cài đặt.</p>
+      <input id="pinInput" type="password" inputmode="numeric" maxlength="4" placeholder="••••" onkeypress="if(event.key==='Enter') verifyPin()" />
+      <div style="display:flex; gap:8px; justify-content:flex-end;">
+        <button class="btn" onclick="closeModal('pinModal')">Hủy</button>
+        <button class="btn btn-primary" onclick="verifyPin()">Mở khóa</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL 2: CẤU HÌNH ĐỊA CHỈ SERVER API -->
+  <div id="apiModal" class="modal-backdrop">
+    <div class="modal-card">
+      <h3>🌐 Cấu Hình Địa Chỉ Server API (V1.4 / V2.4)</h3>
+      <input id="apiUrlInput" type="text" value="https://khotrithucso.io.vn/robot2027_2_4/api.php" />
+      <div style="display:flex; gap:8px; flex-wrap:wrap;">
+        <button class="btn" onclick="document.getElementById('apiUrlInput').value='https://khotrithucso.io.vn/robot2027_2_4/api.php'">Server 2.4 Chính</button>
+        <button class="btn" onclick="document.getElementById('apiUrlInput').value='https://khotrithucso.io.vn/robot2027_2_4/test1/api.php'">Server Test1</button>
+      </div>
+      <div style="display:flex; gap:8px; justify-content:flex-end;">
+        <button class="btn" onclick="closeModal('apiModal')">Đóng</button>
+        <button class="btn btn-success" onclick="saveApiUrl()">Lưu Cấu Hình</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL 3: BLUETOOTH & MẠCH ESP32 -->
+  <div id="espModal" class="modal-backdrop">
+    <div class="modal-card">
+      <h3>🔵 Kết Nối Bluetooth & Mạch ESP32</h3>
+      <p id="espStatusText" style="font-size:13px; color:#cbd5e1;">Chưa kết nối mạch ESP32. Bấm quét BLE hoặc dùng bộ nút giả lập bên dưới để kiểm tra.</p>
+      <button class="btn btn-primary" onclick="connectEsp32Ble()">📡 Quét & Kết Nối ESP32 BLE</button>
+      <div style="border-top:1px solid #1e293b; padding-top:8px;">
+        <div style="font-size:12px; color:#94a3b8; margin-bottom:6px;">Giả lập 4 nút cứng vật lý trên thân Robot:</div>
+        <div style="display:flex; gap:6px; flex-wrap:wrap;">
+          <button class="btn" onclick="closeModal('espModal'); handleEspButton(1)">Nút 1 (Đọc/Búa)</button>
+          <button class="btn" onclick="closeModal('espModal'); handleEspButton(2)">Nút 2 (Nghe/Bao)</button>
+          <button class="btn" onclick="closeModal('espModal'); handleEspButton(3)">Nút 3 (Tiếp/Kéo)</button>
+          <button class="btn" onclick="closeModal('espModal'); handleEspButton(4)">Nút 4 (Sổ học)</button>
+        </div>
+      </div>
+      <div style="display:flex; justify-content:flex-end;">
+        <button class="btn" onclick="closeModal('espModal')">Đóng</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>

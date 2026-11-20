@@ -1,0 +1,13 @@
+{
+  "appId": "com.robot2027.companion",
+  "appName": "Robot 2027",
+  "webDir": "www",
+  "bundledWebRuntime": false,
+  "server": {
+    "androidScheme": "http",
+    "cleartext": true
+  },
+  "android": {
+    "allowMixedContent": true
+  }
+}

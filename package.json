@@ -1,0 +1,16 @@
+{
+  "name": "robot2027-companion",
+  "version": "1.4.0",
+  "description": "Robot 2027 Companion V1.4 - Native Kiosk, Zero-Beep Mic, Dual TTS, 32 Offline Study Packs & ESP32 BLE",
+  "main": "www/app.js",
+  "scripts": {
+    "sync": "npx cap sync android"
+  },
+  "dependencies": {
+    "@capacitor/android": "^6.1.2",
+    "@capacitor/core": "^6.1.2"
+  },
+  "devDependencies": {
+    "@capacitor/cli": "^6.1.2"
+  }
+}

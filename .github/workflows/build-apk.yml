@@ -1,0 +1,50 @@
+name: Build Robot2027 App V1.4 APK
+
+on:
+  push:
+    branches: [ main, master ]
+  workflow_dispatch:
+
+jobs:
+  build-apk:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: 1. Checkout mã nguồn
+        uses: actions/checkout@v4
+
+      - name: 2. Cài đặt Node.js 22
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+
+      - name: 3. Cài đặt Java 21 (Cho Gradle Android)
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '21'
+
+      - name: 4. Cài đặt Capacitor Dependencies
+        run: npm install --legacy-peer-deps
+
+      - name: 5. Khởi tạo dự án Android Capacitor
+        run: npx cap add android
+
+      - name: 6. Tích hợp Native Kiosk, Zero-Beep Mic, Dual TTS & Fix Android 35 (V1.4)
+        run: |
+          mkdir -p android/app/src/main/java/com/robot2027/companion
+          cp native_android/java/com/robot2027/companion/*.java android/app/src/main/java/com/robot2027/companion/
+          python3 native_android/patch_android.py
+
+      - name: 7. Biên dịch APK Debug V1.4
+        run: |
+          npx cap sync android
+          cd android
+          chmod +x gradlew
+          ./gradlew assembleDebug
+
+      - name: 8. Xuất file APK V1.4 hoàn chỉnh
+        uses: actions/upload-artifact@v4
+        with:
+          name: Robot2027-App-V1.4-Debug-APK
+          path: android/app/build/outputs/apk/debug/app-debug.apk
